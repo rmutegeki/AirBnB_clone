@@ -8,6 +8,7 @@ Functions and Classes:
 
 
 import cmd
+from datetime import datetime
 from models.base_model import BaseModel
 from models.user import User
 from models.place import Place
@@ -134,6 +135,19 @@ class HBNBCommand(cmd.Cmd):
         and id by adding or updating attribute
         """
 
+        cast = {'User': {'email': str, 'password': str, 'first_name': str,
+                         'last_name': str},
+                'State': {'state_id': str, 'name': str},
+                'Amenity': {'name': str},
+                'Review': {'place_id': str, 'user_id': str, 'text': str},
+                'Place': {'city_id': str, 'user_id': str, 'name': str,
+                          'description': str, 'number_rooms': int,
+                          'number_bathrooms': int, 'max_guest': int,
+                          'price_by_night': int, 'latitude': float,
+                          'longitude': float, 'amenity_ids': eval},
+                'BaseModel': {'id': str, 'created_at': datetime,
+                              'updated_at': datetime}}
+
         classes = ['BaseModel', 'City', 'User', 'State', 'Place',
                    'Review', 'Amenity']
         args = line.split()
@@ -154,7 +168,14 @@ class HBNBCommand(cmd.Cmd):
                     print("** value missing **")
                 else:
                     my_obj = objects[key]
-                    setattr(my_obj, args[2], args[3].strip('"'))
+
+                    # Find attribute type
+                    cls = args[0]
+                    attr = args[2]
+                    cast_to_type = cast[cls][attr]
+
+                    value = args[3].strip('"')
+                    setattr(my_obj, args[2], cast_to_type(value))
                     storage.save()
             else:
                 print("** no instance found **")
