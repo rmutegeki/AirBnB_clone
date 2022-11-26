@@ -24,6 +24,20 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
 
+    classes = {'User': {'email': str, 'password': str, 'first_name': str,
+                        'last_name': str},
+               'City': {'state_id': str, 'name': str},
+               'Amenity': {'name': str},
+               'State': {'name': str},
+               'Review': {'place_id': str, 'user_id': str, 'text': str},
+               'Place': {'city_id': str, 'user_id': str, 'name': str,
+                         'description': str, 'number_rooms': int,
+                         'number_bathrooms': int, 'max_guest': int,
+                         'price_by_night': int, 'latitude': float,
+                         'longitude': float, 'amenity_ids': eval},
+               'BaseModel': {'id': str, 'created_at': datetime,
+                             'updated_at': datetime}}
+
     def do_EOF(self, line):
         """Exits the program with ^D
         """
@@ -65,13 +79,11 @@ class HBNBCommand(cmd.Cmd):
         based on the class name and id
         """
 
-        classes = ['BaseModel', 'City', 'User', 'State', 'Place',
-                   'Review', 'Amenity']
         args = line.split()
 
         if line == "":
             print("** class name missing **")
-        elif args[0] in classes:
+        elif args[0] in self.classes.keys():
             if len(args) == 1:
                 print("** instance id missing **")
             elif len(args) == 2:
@@ -88,13 +100,11 @@ class HBNBCommand(cmd.Cmd):
         """Deletes an instance based on the class name and id
         """
 
-        classes = ['BaseModel', 'City', 'User', 'State', 'Place',
-                   'Review', 'Amenity']
         args = line.split()
 
         if line == "":
             print("** class name missing **")
-        elif args[0] in classes:
+        elif args[0] in self.classes.keys():
             if len(args) == 1:
                 print("** instance id missing **")
             elif len(args) == 2:
@@ -113,11 +123,11 @@ class HBNBCommand(cmd.Cmd):
         based or not on the class name
         """
 
-        classes = ['BaseModel', 'City', 'User', 'State', 'Place',
-                   'Review', 'Amenity']
         args = line.split()
 
-        if (line == "") or ((len(args) == 1) and (args[0] in classes)):
+        condition_1 = line == ""
+        condition_2 = (len(args) == 1) and (args[0] in self.classes.keys())
+        if condition_1 or condition_2:
             objects = storage.all()
             obj_list = []
             for k in objects.keys():
@@ -135,26 +145,11 @@ class HBNBCommand(cmd.Cmd):
         and id by adding or updating attribute
         """
 
-        cast = {'User': {'email': str, 'password': str, 'first_name': str,
-                         'last_name': str},
-                'State': {'state_id': str, 'name': str},
-                'Amenity': {'name': str},
-                'Review': {'place_id': str, 'user_id': str, 'text': str},
-                'Place': {'city_id': str, 'user_id': str, 'name': str,
-                          'description': str, 'number_rooms': int,
-                          'number_bathrooms': int, 'max_guest': int,
-                          'price_by_night': int, 'latitude': float,
-                          'longitude': float, 'amenity_ids': eval},
-                'BaseModel': {'id': str, 'created_at': datetime,
-                              'updated_at': datetime}}
-
-        classes = ['BaseModel', 'City', 'User', 'State', 'Place',
-                   'Review', 'Amenity']
         args = line.split()
 
         if line == "":
             print("** class name missing **")
-        elif args[0] not in classes:
+        elif args[0] not in self.classes.keys():
             print("** class doesn't exist **")
         elif len(args) == 1:
             print("** instance id missing **")
@@ -172,13 +167,27 @@ class HBNBCommand(cmd.Cmd):
                     # Find attribute type
                     cls = args[0]
                     attr = args[2]
-                    cast_to_type = cast[cls][attr]
+                    cast_to_type = self.classes[cls][attr]
 
-                    value = args[3].strip('"')
+                    value = get_value(args[3:])
                     setattr(my_obj, args[2], cast_to_type(value))
                     storage.save()
             else:
                 print("** no instance found **")
+
+
+def get_value(args):
+    """ gets attribute's value passed inside double quotes """
+
+    if args:
+        if args[0].startswith('"'):
+            tmp = ' '.join(args)
+            my_l = tmp.split('"')
+            for i in my_l:
+                if i != "":
+                    return i
+        else:
+            return args[0]
 
 
 if __name__ == '__main__':
