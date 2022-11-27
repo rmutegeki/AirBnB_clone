@@ -96,7 +96,7 @@ class HBNBCommand(cmd.Cmd):
         if not model_type:
             print("** class name missing **")
         elif model_type not in HBNBCommand.class_ls:
-            print("** class name doesn' exist **")
+            print("** class name doesn't exist **")
         else:
             dic = {'BaseModel': BaseModel, 'User': User, 'Place': Place,
                    'State': State, 'Amenity': Amenity, 'Review': Review,
