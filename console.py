@@ -25,7 +25,8 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
 
-    class_ls = ['User', 'City', 'Amenity', 'State', 'Review', 'Place', 'BaseModel']
+    class_ls = ['User', 'City', 'Amenity', 'State',
+                'Review', 'Place', 'BaseModel']
 
     classes = {'User': {'email': str, 'password': str, 'first_name': str,
                         'last_name': str},
@@ -50,7 +51,8 @@ class HBNBCommand(cmd.Cmd):
             cnd = cls[1].split('(')
             cnd[1] = cnd[1].replace("'", '"')
             args = cnd[1].split(')')
-            if cls[0] in HBNBCommand.class_ls and cnd[0] in HBNBCommand.commands:
+            if cls[0] in HBNBCommand.class_ls \
+                    and cnd[0] in HBNBCommand.commands:
                 arg = cnd[0] + ' ' + cls[0] + ' ' + args[0]
         return arg
 
@@ -232,4 +234,3 @@ def get_value(args):
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
-
