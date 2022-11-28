@@ -12,9 +12,6 @@ from models.base_model import BaseModel
 class Place(BaseModel):
     """representing a place"""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     city_id = ""
     user_id = ""
     name = ""
