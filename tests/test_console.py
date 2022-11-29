@@ -21,8 +21,8 @@ from models.engine.file_storage import FileStorage
 
 
 class TestConsole(unittest.TestCase):
-
     """Unittest for command interpreter"""
+
     @classmethod
     def setUpClass(self):
         """Set up test"""
@@ -33,10 +33,11 @@ class TestConsole(unittest.TestCase):
         """Remove temporary file (file.json) created as a result"""
         try:
             os.remove("file.json")
-        except:
+        except IOError as e:
             pass
 
     """Check for Pep8 style conformance"""
+
     def test_pep8_console(self):
         """Pep8 console.py"""
         style = pep8.StyleGuide(quiet=False)
@@ -53,7 +54,8 @@ class TestConsole(unittest.TestCase):
         errors += style.check_files(file).total_errors
         self.assertEqual(errors, 0, 'Need to fix Pep8')
 
-    """Check for docstring existance"""
+    """Check for docstring existence"""
+
     def test_docstrings_in_console(self):
         """Test docstrings exist in console.py"""
         self.assertTrue(len(console.__doc__) >= 1)
@@ -63,6 +65,7 @@ class TestConsole(unittest.TestCase):
         self.assertTrue(len(self.__doc__) >= 1)
 
     """Test command interpreter outputs"""
+
     def test_emptyline(self):
         """Test no user input"""
         with patch('sys.stdout', new=StringIO()) as fake_output:
@@ -90,7 +93,7 @@ class TestConsole(unittest.TestCase):
     def test_all(self):
         """Test cmd output: all"""
         with patch('sys.stdout', new=StringIO()) as fake_output:
-            self.typing.onecmd("all NonExistantModel")
+            self.typing.onecmd("all NonExistentModel")
             self.assertEqual("** class doesn't exist **\n",
                              fake_output.getvalue())
         with patch('sys.stdout', new=StringIO()) as fake_output:
@@ -161,12 +164,6 @@ class TestConsole(unittest.TestCase):
             self.typing.onecmd("User.show('123')")
             self.assertEqual("** no instance found **\n",
                              fake_output.getvalue())
-
-    def test_class_cmd(self):
-        """Test cmd output: <class>.<cmd>"""
-        with patch('sys.stdout', new=StringIO()) as fake_output:
-            self.typing.onecmd("User.count()")
-            self.assertEqual(int, type(eval(fake_output.getvalue())))
 
 
 if __name__ == "__main__":
