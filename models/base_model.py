@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This is 'base_model' module.
+This is the  'base_model' module.
 Functions and Classes:
     class BaseModel
 """
@@ -13,7 +13,14 @@ from models import storage
 
 class BaseModel:
     """Base model that defines all common
-    attributes/methods for other classes"""
+    attributes/methods for other classes
+    Methods:
+        __init__(self, *args, **kwargs)
+        __str__(self)
+        __save(self)
+        __repr__(self)
+        to_dict(self)
+    """
 
     def __init__(self, *args, **kwargs):
         """initializes all the attributes of this class
@@ -30,6 +37,17 @@ class BaseModel:
             self.created_at = datetime.now()
             self.updated_at = self.created_at
             storage.new(self)
+
+    def __str__(self):
+        """returns a string of info about the model
+        """
+        return ('[{}] ({}) {}'.
+                format(self.__class__.__name__, self.id, self.__dict__))
+
+    def __repr__(self):
+        """returns a string representation
+        """
+        return self.__str__()
 
     def save(self):
         """save to file"""
@@ -54,10 +72,3 @@ class BaseModel:
         my_dict['__class__'] = self.__class__.__name__
 
         return my_dict
-
-    def __str__(self):
-        """string representation of an instance"""
-
-        class_name = "[" + self.__class__.__name__ + "]"
-        dct = {k: v for (k, v) in self.__dict__.items() if (not v) is False}
-        return class_name + " (" + self.id + ") " + str(dct)
